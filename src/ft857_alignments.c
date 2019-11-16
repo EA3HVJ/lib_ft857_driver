@@ -1,0 +1,119 @@
+/*
+ * Copyright (C) 2019 Joan Planella Costa
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+#include "../include/ft857_alignments.h"
+
+#include <stdlib.h>
+#include "eeprom_codec.h"
+#include "eeprom_map.h"
+#include "strings/strings.h"
+
+static const char* STR_ALIGNMENT[NUM_ALIGNMENTS] = {
+	STR_ALIGNMENT_01_HF1_RXG,
+	STR_ALIGNMENT_02_HF2_RXG,
+	STR_ALIGNMENT_03_HF3_RXG,
+	STR_ALIGNMENT_04_M50_RXG,
+	STR_ALIGNMENT_05_VHF_RXG,
+	STR_ALIGNMENT_06_UHF_RXG,
+	STR_ALIGNMENT_07_SSB_S9,
+	STR_ALIGNMENT_08_SSB_FS,
+	STR_ALIGNMENT_09_FM_S1,
+	STR_ALIGNMENT_10_FM_FS,
+	STR_ALIGNMENT_11_DISC_L,
+	STR_ALIGNMENT_12_DISC_H,
+	STR_ALIGNMENT_13_FM_TH1,
+	STR_ALIGNMENT_14_FM_TH2,
+	STR_ALIGNMENT_15_FM_TI1,
+	STR_ALIGNMENT_16_FM_TI2,
+	STR_ALIGNMENT_17_VCC,
+	STR_ALIGNMENT_18_HF1_IC,
+	STR_ALIGNMENT_19_HF2_IC,
+	STR_ALIGNMENT_20_HF3_IC,
+	STR_ALIGNMENT_21_M50_IC,
+	STR_ALIGNMENT_22_VHF_IC,
+	STR_ALIGNMENT_23_UHF_IC,
+	STR_ALIGNMENT_24_HF1_PO_MAX,
+	STR_ALIGNMENT_25_HF1_PO_MID2,
+	STR_ALIGNMENT_26_HF1_PO_MID1,
+	STR_ALIGNMENT_27_HF1_PO_MIN,
+	STR_ALIGNMENT_28_HF2_PO_MAX,
+	STR_ALIGNMENT_29_HF2_PO_MID2,
+	STR_ALIGNMENT_30_HF2_PO_MID1,
+	STR_ALIGNMENT_31_HF2_PO_MIN,
+	STR_ALIGNMENT_32_HF3_PO_MAX,
+	STR_ALIGNMENT_33_HF3_PO_MID2,
+	STR_ALIGNMENT_34_HF3_PO_MID1,
+	STR_ALIGNMENT_35_HF3_PO_MIN,
+	STR_ALIGNMENT_36_M50_PO_MAX,
+	STR_ALIGNMENT_37_M50_PO_MID2,
+	STR_ALIGNMENT_38_M50_PO_MID1,
+	STR_ALIGNMENT_39_M50_PO_MIN,
+	STR_ALIGNMENT_40_VHF_PO_MAX,
+	STR_ALIGNMENT_41_VHF_PO_MID,
+	STR_ALIGNMENT_42_VHF_PO_MIN,
+	STR_ALIGNMENT_43_UHF_PO_MAX,
+	STR_ALIGNMENT_44_UHF_PO_MIN,
+	STR_ALIGNMENT_45_HF1_TXG,
+	STR_ALIGNMENT_46_HF2_TXG,
+	STR_ALIGNMENT_47_HF3_TXG,
+	STR_ALIGNMENT_48_M50_TXG,
+	STR_ALIGNMENT_49_VHF_TXG,
+	STR_ALIGNMENT_50_UHF_TXG,
+	STR_ALIGNMENT_51_ALC1_M,
+	STR_ALIGNMENT_52_ALC_M,
+	STR_ALIGNMENT_53_HF1_REV_ALC,
+	STR_ALIGNMENT_54_HF2_REV_ALC,
+	STR_ALIGNMENT_55_HF3_REV_ALC,
+	STR_ALIGNMENT_56_M50_REV_ALC,
+	STR_ALIGNMENT_57_VHF_REV_ALC,
+	STR_ALIGNMENT_58_UHF_REV_ALC,
+	STR_ALIGNMENT_59_CW_CAR_LEVEL,
+	STR_ALIGNMENT_60_AM_CAR_LEVEL,
+	STR_ALIGNMENT_61_DEV_W,
+	STR_ALIGNMENT_62_DEV_N,
+	STR_ALIGNMENT_63_MOD_MTR,
+	STR_ALIGNMENT_64_DTMF_DEV,
+	STR_ALIGNMENT_65_CTCSS_DEV,
+	STR_ALIGNMENT_66_DCS_DEV,
+	STR_ALIGNMENT_67_LSB_CAR_POINT,
+	STR_ALIGNMENT_68_USB_CAR_POINT,
+	STR_ALIGNMENT_69_VSWR2_10W,
+	STR_ALIGNMENT_70_VSWR3_10W,
+	STR_ALIGNMENT_71_ATAS_TEST,
+	STR_ALIGNMENT_72_AMTR_TEST,
+	STR_ALIGNMENT_73_HTEMP_THRESHOLD,
+	STR_ALIGNMENT_74_FTEMP_THRESHOLD
+};
+
+/* Enum FT857_alignment To String */
+const char* FT857_alignment_to_str(enum FT857_alignment src)
+{
+	if (src >= 0 && src < NUM_ALIGNMENTS) {
+		return STR_ALIGNMENT[src];
+	} else {
+		return NULL;
+	}
+}
+
+struct CAT_eeprom_block* FT857_get_alignment_config(
+	struct CAT_device* dev,
+	void (*progress_callback)(float, void*),
+	void* callback_args)
+{
+	return CAT_read_eeprom_block(dev, ADR_ALIGNMENT_CONFIG,
+		SIZE_ALIGNMENT_CONFIG, progress_callback, callback_args);
+}
